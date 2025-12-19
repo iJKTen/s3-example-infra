@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  SharedGitHubConnection:
+    Type: AWS::CodeConnections::Connection
+    Properties:
+      ConnectionName: github-org-connection
+      ProviderType: GitHub
+
+Outputs:
+  ExportedConnectionArn:
+    Value: !Ref SharedGitHubConnection
+    Export:
+      Name: !Sub "${AWS::StackName}-GitHubConnectionArn"
