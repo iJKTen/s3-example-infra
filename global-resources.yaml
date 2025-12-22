@@ -6,6 +6,45 @@ Resources:
       ConnectionName: github-org-connection
       ProviderType: GitHub
 
+  CloudFormationGitSyncRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: CloudFormationGitSyncRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.sync.codeconnections.amazonaws.com
+                - cloudformation.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/IAMFullAccess
+        - arn:aws:iam::aws:policy/AWSCodePipeline_FullAccess
+      Policies:
+        - PolicyName: GitSyncExtraPermissions
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: EventBridgeManagement
+                Effect: Allow
+                Action:
+                  - 'events:PutRule'
+                  - 'events:PutTargets'
+                  - 'events:DescribeRule'
+                Resource: '*'
+              - Sid: PassConnectionPermission
+                Effect: Allow
+                Action:
+                  - 'codeconnections:PassConnection'
+                  - 'codeconnections:UseConnection'
+                  - 'codestar-connections:PassConnection'
+                  - 'codestar-connections:UseConnection'
+                Resource: !Sub 'arn:aws:codeconnections:${AWS::Region}:${AWS::AccountId}:connection/*'
+
 Outputs:
   ExportedConnectionArn:
     Value: !Ref SharedGitHubConnection
