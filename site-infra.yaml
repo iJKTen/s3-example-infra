@@ -35,7 +35,7 @@ Resources:
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
-            Resource: '!Sub ${S3WebsiteBucket.Arn}/*'
+            Resource: !Sub '${S3WebsiteBucket.Arn}/*'
 
   PipelineArtifactBucket:
     Type: 'AWS::S3::Bucket'
