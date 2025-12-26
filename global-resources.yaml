@@ -49,4 +49,4 @@ Outputs:
   ExportedConnectionArn:
     Value: !Ref SharedGitHubConnection
     Export:
-      Name: !Sub "${AWS::StackName}-GitHubConnectionArn"
+      Name: "GlobalResourcesStack-GitHubConnectionArn"

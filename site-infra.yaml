@@ -12,12 +12,21 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: CleanUpOldVersions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 30
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
   
   BucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
+      Bucket: !Ref S3WebsiteBucket
       PolicyDocument:
         Id: MyPolicy
         Version: 2012-10-17
@@ -26,8 +35,7 @@ Resources:
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
-            Resource: !Sub 'arn:aws:s3:::${S3WebsiteBucket}/*'
-      Bucket: !Ref S3WebsiteBucket
+            Resource: '!Sub ${S3WebsiteBucket.Arn}/*'
 
   PipelineArtifactBucket:
     Type: 'AWS::S3::Bucket'
@@ -116,9 +124,7 @@ Resources:
 
 Outputs:
   WebsiteURL:
-    Value: !GetAtt 
-      - S3WebsiteBucket
-      - WebsiteURL
+    Value: !GetAtt S3WebsiteBucket.WebsiteURL
     Description: URL for website hosted on S3
   S3WebsiteBucketSecureURL:
     Value: !Sub 'https://${S3WebsiteBucket.DomainName}'
